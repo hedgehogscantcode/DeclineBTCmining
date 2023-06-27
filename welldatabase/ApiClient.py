@@ -2,7 +2,7 @@ import datetime
 import requests
 import json
 
-class WellDatabaseApiClient:
+class ApiClient:
 	"""Allows programmatic access of the [Well Database API](https://app.welldatabase.com/apihelp)
 	"""
 	def __init__(self, api_key: str) -> None:
@@ -20,7 +20,7 @@ class WellDatabaseApiClient:
 
 	def get_well_production_forecast(self, id: int, since: datetime.datetime):
 		return self.get_well_data(id, 'post', since, 'productionForecast/search')
-	
+
 	def get_well_data(self, id: int, method: str, since: datetime.datetime, data_type: str) -> dict[str, any]:
 		request = {
 			'endpoint_url': f'https://app.welldatabase.com/api/v2/{data_type}',
@@ -29,9 +29,9 @@ class WellDatabaseApiClient:
 				"Filters": {
 					"DateLastModified": {
 						"Min": since.strftime("%Y-%m-%d")
-					},
-					"SimpleIds": [ id ]
+					}
 				},
+				# TODO: Allow this information to be passed in with reasonable defaults
 				"SortBy": "",
 				"SortDirection": "Descending",
 				"PageSize": "2",

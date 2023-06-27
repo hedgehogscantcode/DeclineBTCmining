@@ -1,0 +1,38 @@
+{
+    "total": 1816117,
+    "data": [
+        {
+            "id": "47583afa-43ce-4b73-b803-fdd802d2581d",
+            "wellId": "fcec70f2-e6ea-4a60-a069-f92b363e3608",
+            "dateCreated": "2023-01-28T03:28:22.434179",
+            "dateLastModified": "2023-06-27T14:08:46.7701279",
+            "forecastDate": "1991-05-01T00:00:00",
+            "days": 31,
+            "monthNumber": 104,
+            "oil": 126.74948,
+            "gas": null,
+            "water": null,
+            "simpleId": 755866,
+            "internalId": 661258423,
+            "dateCatalogued": "2023-06-27T14:08:48.7222418"
+        },
+        {
+            "id": "ac154031-ac53-4d18-95ff-fb7ea34408ff",
+            "wellId": "fcec70f2-e6ea-4a60-a069-f92b363e3608",
+            "dateCreated": "2023-01-28T03:28:22.435146",
+            "dateLastModified": "2023-06-27T14:08:46.7700497",
+            "forecastDate": "1992-03-01T00:00:00",
+            "days": 31,
+            "monthNumber": 114,
+            "oil": 116.360794,
+            "gas": null,
+            "water": null,
+            "simpleId": 755866,
+            "internalId": 661258471,
+            "dateCatalogued": "2023-06-27T14:08:48.7177202"
+        }
+    ],
+    "page": 1,
+    "pageOffset": 0,
+    "pageSize": 2
+}

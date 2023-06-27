@@ -4,32 +4,76 @@ import datetime
 import requests
 import json
 
-endpoint_url = "https://app.welldatabase.com/api/v2/casings/search"
+def main():
+	#
+	# Initialize the stuff that will be common across calls
+	#
+	api_key = '2qsocSTzRYlFCKLA71iAFr5B3hX2DdhaQI69fDGl8fSWwp2GbljevovZsozVvxjs'
+	client = WellDatabaseApiClient(api_key)
 
-headers = {
-    'Content-Type' : 'application/json',
-    'User-Agent' : 'Your Application Name',
-    'Api-Key' : '2qsocSTzRYlFCKLA71iAFr5B3hX2DdhaQI69fDGl8fSWwp2GbljevovZsozVvxjs'
-}
+	#
+	# Run our example.  In this case, we're asking for well ID 18008285 since seven days ago
+	#
+	modifiedSince = datetime.datetime.now() - datetime.timedelta(days=7)
+	data = client.get_well_history(18008285, modifiedSince)
+	print(data)
 
-modifiedSince = datetime.datetime.now() - datetime.timedelta(days=10)
 
-data = {
-    "Filters": {
-        "DateLastModified": {
-            "Min": modifiedSince.strftime("%Y-%m-%d")
-        }
-    },
-    "SortBy": "",
-    "SortDirection": "Descending",
-    "PageSize": "2",
-    "Page": "1"
-}
+class WellDatabaseApiClient:
+	"""Allows programmatic access of the [Well Database API](https://app.welldatabase.com/apihelp)
+	
+	@param api_key: The key used to authenticate / authorize ourselves with the API.
+	"""
+	def __init__(self, api_key: str) -> None:
+		self.headers: dict[str, str] = {
+			'Content-Type' : 'application/json',
+			'User-Agent' : 'Your Application Name',
+			'Api-Key' : api_key
+		}
 
-payload = json.dumps(data)
+	def get_well_history(self, id: int, since: datetime.datetime) -> object:
+		return self.get_well_data(id, since, 'history/search')
 
-response = requests.post(url = endpoint_url, headers = headers, data = payload)
-results = json.loads(response.content)
+	def get_well_production_forecast(self, id: int, since: datetime.datetime) -> object:
+		return self.get_well_data(id, since, 'productionForcast/search')
+	
+	def get_well_data(self, id: int, since: datetime.datetime, data_type: str):
+		request = {
+			'endpoint_url': f'https://app.welldatabase.com/api/v2/{data_type}',
+			'data': {
+				"Filters": {
+					"DateLastModified": {
+						"Min": since.strftime("%Y-%m-%d")
+					},
+					"SimpleIds": [ id ]
+				},
+				"SortBy": "",
+				"SortDirection": "Descending",
+				"PageSize": "2",
+				"Page": "1"
+			}
+		}
+		return self._exec_api_rpc(request)
 
-print(results)
+	def _exec_api_rpc(self, request: dict[str, any]):
+		"""The lowest-level call that performs the heavy-lifting in this scenario.
+		This method assumes a simple, JSON-encoded, REST-based RPC that obey HTTP status codes.
+		All interactions that match this criteria _should_ go through this method.
+		"""
+		payload = json.dumps(request['data'])
 
+		response = requests.post(
+			url = request['endpoint_url'],
+			headers = self.headers,
+			data = payload)
+
+		if response.status_code != 200:
+			raise ValueError(f"Failure to receive a successful response from the API: {response}")
+
+		return json.loads(response.content)
+
+#
+# Entrypoint if running this from a console
+#
+if __name__ == '__main__':
+	main()
